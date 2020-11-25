@@ -1,0 +1,9 @@
+// global style
+html {
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  @apply overflow-x-hidden;
+}

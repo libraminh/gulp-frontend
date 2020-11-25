@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Gulp Frontend">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gulp Frontend</title>
+
+    {% block styleExtends %}{% endblock %}
+    <link href="css/tailwind.css" rel="stylesheet" type="text/css">
+    <link href="css/main.css" rel="stylesheet" type="text/css">
+  </head>
+
+  <body>
+    <div id="page">
+      {% block content %}{% endblock %}
+      {% block sideMenu %}{% endblock %}
+    </div>
+
+    <script src="js/main.js"></script>
+    {% block scriptExtends %}{% endblock %}
+  </body>
+</html>

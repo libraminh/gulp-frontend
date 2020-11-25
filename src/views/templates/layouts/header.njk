@@ -1,0 +1,96 @@
+{% set navItems = [
+  {
+    name: 'Academic Programmes',
+    href: '#',
+    submenu: [
+      {
+        name: 'Discipline',
+        submenu: [
+          {
+            name: 'Accounting'
+          }, {
+            name: 'Business'
+          }, {
+            name: 'Education'
+          }
+        ]
+      }, {
+        name: 'Universities',
+        submenu: [
+          {
+            name: 'Accounting'
+          }, {
+            name: 'Business'
+          }, {
+            name: 'Education'
+          }
+        ]
+      }, {
+        name: 'Programme Level',
+        submenu: [
+          {
+            name: 'Accounting'
+          }, {
+            name: 'Business'
+          }, {
+            name: 'Education'
+          }
+        ]
+      }, {
+        name: 'Programme Finder'
+      }
+    ]
+  }, {
+    name: 'Postgraduate Studies',
+    href: '#'
+  }, {
+    name: 'Professional Accountancy',
+    href: '#'
+  }, {
+    name: 'Professional Skills',
+    href: '#'
+  }, {
+    name: 'Current Students',
+    href: '#'
+  }
+] %}
+
+<section class="section__header bg-kp-blue">
+  <div class="max-w-1229 mx-auto px-3 xl:px-0">
+    <header class="flex flex-wrap items-center justify-between">
+      <div>
+        <a href="#">
+          <img src="./images/logo.png" alt="logo"/>
+        </a>
+      </div>
+
+      <nav class="primary-navbar text-white text-17 font-medium list-none flex">
+        {% for item in navItems %}
+          <li class="flex items-center px-3 relative">
+            <a class="py-5" href="{{ item.href }}">{{ item.name }}</a>
+
+            {% if item.submenu %}
+              <nav class="sub_menu w-full text-sm absolute top-full left-0 z-10 bg-white text-kp-gray-800">
+                {% for menu in item.submenu %}
+                  <li class="flex items-center">
+                    <a class="block w-full py-3 px-6" href="#">{{ menu.name }}</a>
+
+                    {% if menu.submenu %}
+                      <nav class="sub_menu_child w-full text-sm absolute top-0 left-full z-10 bg-white text-kp-gray-800">
+                        {% for menu_item in item.submenu %}
+                          <li class="flex items-center">
+                            <a class="block w-full py-3 px-6" href="#">{{ menu_item.name }}</a>
+                          </li>
+                        {% endfor %}
+                      </nav>
+                    {% endif %}
+                  </li>
+                {% endfor %}
+              </nav>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </nav>
+    </header>
+  </div>
+</section>

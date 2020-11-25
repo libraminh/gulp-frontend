@@ -1,0 +1,38 @@
+{% set logos = [
+  './images/youtube.png',
+  './images/instagram.png',
+  './images/facebook.png',
+  './images/linkedin.png'
+] %}
+
+<footer class="section--footer bg-kp-gray-dark py-16">
+  <div class="max-w-1229 mx-auto px-3 xl:px-0">
+    <div class="flex flex-wrap -mx-2">
+      <div class="w-1/2 flex flex-wrap items-center">
+        <div class="mr-12">
+          <a href="#">
+            <img src="./images/logo.png" alt="logo" />
+          </a>
+        </div>
+        
+        <div class="text-white text-17">
+          © Copyright 2020 Kaplan Singapore. All Rights Reserved.
+        </div>
+      </div>
+
+      <div class="w-1/2 flex items-center justify-end">
+        <span class="text-17 text-white font-bold mr-8">Follow us on</span>
+
+        <nav class="list-none flex">
+          {% for item in logos %}
+          <li class="{{ "mr-10" if loop.index < loop.length }}">
+            <a href="#">
+              <img src="{{ item }}" alt="logo">
+            </a>
+          </li>
+          {% endfor %}
+        </nav>
+      </div>
+    </div>
+  </div>
+</footer>

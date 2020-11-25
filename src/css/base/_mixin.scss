@@ -1,0 +1,10 @@
+@mixin screen-d($breakpoint) {
+  @media (max-width: theme('screens.' + $breakpoint)) {
+    @content;
+  }
+}
+@mixin screen($breakpoint) {
+  @media (min-width: theme('screens.' + $breakpoint)) {
+    @content;
+  }
+}
