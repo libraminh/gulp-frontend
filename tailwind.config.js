@@ -1,15 +1,13 @@
-var TailwindExtend = require('./tailwind/extend');
+var { themes, variants, plugins } = require('./tailwind/extend');
 
 module.exports = {
   purge: false,
   darkMode: false, // or 'media' or 'class'
   theme: {
-    extend: TailwindExtend
+    extend: themes
   },
   variants: {
-    extend: {
-      aspectRatio: ["responsive"], // defaults to ['responsive']
-    },
+    extend: variants
   },
-  plugins: [require("tailwindcss-aspect-ratio")],
+  plugins: plugins,
 };

@@ -24,8 +24,7 @@ const screens = {
   "d-2xl": { max: screenSizes["2xl"] - 1 + "px" },
 };
 
-
-module.exports = {
+exports.themes = {
   screens,
   aspectRatio: {
     // defaults to {}
@@ -72,3 +71,9 @@ module.exports = {
   fontFamily: {
   },
 }
+
+exports.variants = {
+  aspectRatio: ["responsive"], // defaults to ['responsive']
+}
+
+exports.plugins = [require("tailwindcss-aspect-ratio")]
