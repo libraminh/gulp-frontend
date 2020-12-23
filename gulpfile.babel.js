@@ -33,14 +33,14 @@ const purgecss = require("@fullhuman/postcss-purgecss")({
 
 const postcssPlugins = (isPurge) => [
   require("postcss-import"),
-  require("tailwindcss"),
+  require("tailwindcss")("./tailwind/tailwind.config.js"),
   require("autoprefixer"),
   ...(isProd && isPurge ? [purgecss] : []),
 ];
 
 const paths = {
   styles: {
-    src: "src/css/**/!(tailwind)*.+(scss|css)",
+    src: "src/css/**/!(tailwind)*.scss",
     dest: "dist/css/",
   },
   scripts: {
@@ -57,7 +57,7 @@ const paths = {
   },
   tailwind: {
     src: "tailwind/**/*.js",
-    css: "src/css/libs/tailwind.+(scss|css)",
+    css: "src/css/libs/tailwind.scss",
     dest: "dist/css/",
   },
   libs: {
@@ -74,18 +74,18 @@ function clean() {
 }
 
 export function styles(done) {
-  src(paths.tailwind.css)
-    .pipe(sass())
-    .pipe(postcss(postcssPlugins(true)))
-    .pipe(gulpif(isProd, cleanCSS()))
-    .pipe(dest(paths.tailwind.dest))
-    .pipe(browserSync.stream());
-
   src(paths.styles.src)
     .pipe(sass())
     .pipe(postcss(postcssPlugins(false)))
     .pipe(gulpif(isProd, cleanCSS()))
     .pipe(dest(paths.styles.dest))
+    .pipe(browserSync.stream());
+
+  src(paths.tailwind.css)
+    .pipe(sass())
+    .pipe(postcss(postcssPlugins(true)))
+    .pipe(gulpif(isProd, cleanCSS()))
+    .pipe(dest(paths.tailwind.dest))
     .pipe(browserSync.stream());
 
   done();
