@@ -1,4 +1,4 @@
-var { themes, variants, plugins } = require("./extend");
+var { themes, variants, plugins } = require("./tailwind.extend");
 
 module.exports = {
   purge: false,
