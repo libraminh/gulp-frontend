@@ -1,5 +1,4 @@
 import { src, series, parallel, dest, watch } from "gulp";
-import sass from "gulp-sass";
 import cleanCSS from "gulp-clean-css";
 import imagemin from "gulp-imagemin";
 import browser from "browser-sync";
@@ -15,32 +14,9 @@ const browserSync = browser.create();
 const isProd = process.env.NODE_ENV === "production";
 const isTest = process.env.NODE_TEST === "test";
 
-const purgecss = require("@fullhuman/postcss-purgecss")({
-  // Specify the paths to all of the template files in your project
-  content: ["./src/**/*.html", "./src/**/*.njk", "./src/**/*.js"],
-
-  // This is the function used to extract class names from your templates
-  defaultExtractor: (content) => {
-    // Capture as liberally as possible, including things like `h-(screen-1.5)`
-    const broadMatches = content.match(/[^<>"'`\s]*[^<>"'`\s:]/g) || [];
-
-    // Capture classes within other delimiters like .block(class="w-1/2") in Pug
-    const innerMatches = content.match(/[^<>"'`\s.()]*[^<>"'`\s.():]/g) || [];
-
-    return broadMatches.concat(innerMatches);
-  },
-});
-
-const postcssPlugins = (isPurge) => [
-  require("postcss-import"),
-  require("tailwindcss")("./tailwind/tailwind.config.js"),
-  require("autoprefixer"),
-  ...(isProd && isPurge ? [purgecss] : []),
-];
-
 const paths = {
   styles: {
-    src: "src/css/**/!(tailwind)*.scss",
+    src: "src/css/main.css",
     dest: "dist/css/",
   },
   scripts: {
@@ -55,14 +31,13 @@ const paths = {
     src: "src/images/**",
     dest: "dist/images",
   },
-  tailwind: {
-    src: "tailwind/**/*.js",
-    css: "src/css/libs/tailwind.scss",
-    dest: "dist/css/",
-  },
   libs: {
     src: "src/libs/**",
     dest: "dist/libs",
+  },
+  fonts: {
+    src: "src/fonts/**",
+    dest: "dist/fonts",
   },
   clean: "dist",
 };
@@ -73,23 +48,29 @@ function clean() {
   return del([paths.clean]);
 }
 
-export function styles(done) {
-  src(paths.styles.src)
-    .pipe(sass())
-    .pipe(postcss(postcssPlugins(false)))
+export function styles() {
+  function callback() {
+    return {
+      plugins: [
+        require("postcss-import"),
+        require("tailwindcss/nesting"),
+        require("tailwindcss"),
+        require("autoprefixer"),
+        require("postcss-preset-env")({ features: { "nesting-rules": false } }),
+      ],
+      options: {
+        parser: require("postcss-scss"),
+      },
+    };
+  }
+
+  return src(paths.styles.src)
+    .pipe(postcss(callback))
     .pipe(gulpif(isProd, cleanCSS()))
     .pipe(dest(paths.styles.dest))
     .pipe(browserSync.stream());
-
-  src(paths.tailwind.css)
-    .pipe(sass())
-    .pipe(postcss(postcssPlugins(true)))
-    .pipe(gulpif(isProd, cleanCSS()))
-    .pipe(dest(paths.tailwind.dest))
-    .pipe(browserSync.stream());
-
-  done();
 }
+
 export function scripts() {
   return src(paths.scripts.src, { sourcemaps: true })
     .pipe(
@@ -112,6 +93,10 @@ export function libs() {
   return src(paths.libs.src).pipe(dest(paths.libs.dest));
 }
 
+export function fonts() {
+  return src(paths.fonts.src).pipe(dest(paths.fonts.dest));
+}
+
 export function templates() {
   return src(paths.templates.src)
     .pipe(nunjucks.compile())
@@ -125,12 +110,15 @@ export function watchTask() {
       index: "/index.html",
     },
   });
-  watch(paths.styles.src, styles);
+  watch("src/css/**/*.css", styles);
   watch(paths.images.src, images);
-  watch(paths.tailwind.src, styles).on("change", browserSync.reload);
   watch(paths.scripts.src, scripts).on("change", browserSync.reload);
   watch(paths.libs.src, libs).on("change", browserSync.reload);
-  watch("src/views/**/*.+(html|njk)", templates).on(
+  watch("src/views/**/*.+(html|njk)", parallel(templates, styles)).on(
+    "change",
+    browserSync.reload
+  );
+  watch(["./tailwind.config.js"], parallel(templates, styles)).on(
     "change",
     browserSync.reload
   );
@@ -138,11 +126,11 @@ export function watchTask() {
 
 exports.build = series(
   clean,
-  parallel(templates, images, scripts, styles, libs)
+  parallel(templates, images, scripts, styles, libs, fonts)
 );
 
 exports.default = series(
   clean,
-  parallel(templates, images, scripts, styles, libs),
+  parallel(templates, images, scripts, styles, libs, fonts),
   watchTask
 );
