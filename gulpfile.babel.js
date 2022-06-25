@@ -9,6 +9,10 @@ import del from "del";
 import postcss from "gulp-postcss";
 import gulpif from "gulp-if";
 import concat from "gulp-concat";
+import dartSass from "sass";
+import gulpSass from "gulp-sass";
+
+const sass = gulpSass(dartSass);
 
 const browserSync = browser.create();
 const isProd = process.env.NODE_ENV === "production";
@@ -16,7 +20,7 @@ const isTest = process.env.NODE_TEST === "test";
 
 const paths = {
   styles: {
-    src: "src/css/main.css",
+    src: "src/css/main.scss",
     dest: "dist/css/",
   },
   scripts: {
@@ -66,6 +70,7 @@ export function styles() {
 
   return src(paths.styles.src)
     .pipe(postcss(callback))
+    .pipe(sass().on("error", sass.logError))
     .pipe(gulpif(isProd, cleanCSS()))
     .pipe(dest(paths.styles.dest))
     .pipe(browserSync.stream());
@@ -110,7 +115,7 @@ export function watchTask() {
       index: "/index.html",
     },
   });
-  watch("src/css/**/*.css", styles);
+  watch("src/css/**/*.scss", styles);
   watch(paths.images.src, images);
   watch(paths.scripts.src, scripts).on("change", browserSync.reload);
   watch(paths.libs.src, libs).on("change", browserSync.reload);
