@@ -14,6 +14,10 @@ const browserSync = browser.create();
 const isProd = process.env.NODE_ENV === "production";
 const isTest = process.env.NODE_TEST === "test";
 
+console.log("123");
+console.log("123");
+console.log("123");
+
 const paths = {
   styles: {
     src: "src/css/main.css",
